@@ -8,6 +8,5 @@ int main()
     simplex_method->init();
     simplex_method->calculate();
     simplex_method->result();
-    system("pause");
     return 0;
 }
