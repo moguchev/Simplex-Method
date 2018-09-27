@@ -9,6 +9,7 @@ int main()
     simplex_method->init_my_variant();
     simplex_method->calculate();
     simplex_method->result();
+    delete simplex_method;
     system("pause");
     return 0;
 }
