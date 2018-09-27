@@ -1,4 +1,4 @@
-#include "Simplex.h"
+#include "Simplex.hpp"
 
 
 int main()
