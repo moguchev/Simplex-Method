@@ -1,25 +1,27 @@
 #pragma once
 #include <algorithm>
-#include <iostream>
-#include <set>
-#include <map>
-#include <vector>
-#include <numeric>
-#include <string>
 #include <iomanip>
-
+#include <iostream>
+#include <limits>
+#include <map>
+#include <numeric>
+#include <set>
+#include <string>
+#include <vector>
+#include <utility>
 
 class Simplex
 {
 private:
     double** _Table;
-    std::map<std::pair<size_t,size_t>, std::string> _Basis;
+    std::map<std::pair<size_t, size_t>, std::string> _Basis;
     size_t _Number_of_rows;
     size_t _Number_of_columns;
 
     // ïðîâåðêà ñîâìåñòíîñòè ñèñòåìû îãðàíè÷åíèé
     bool is_compatibility()
     {
+        // ïðîâåðêà ïðèçíàêà íåñîâìåñòíîñòè ñèñòåìû îãðàíè÷åíèé
         for (size_t i = 0; i < _Number_of_rows - 1; ++i)
         {
             if (_Table[i][0] < 0)
@@ -27,12 +29,12 @@ private:
                 for (size_t j = 1; j < _Number_of_columns; ++j)
                 {
                     if (_Table[i][j] < 0)
-                        return true; // ïðîâåðêà ïðèçíàêà íåñîâìåñòíîñòè ñèñòåìû îãðàíè÷åíèé
+                        return true;
                 }
-                return false; // íåò õîòÿ áû îäíîãî îòðèöàòåëüíîãî ýëåìåíòà
+                return false;  // íåò õîòÿ áû îäíîãî îòðèöàòåëüíîãî ýëåìåíòà
             }
         }
-        return true; // íåò ñòðîêè ñ îòðèöàòåëüíûì ñâîáîäíûì ÷èñëîì (êðîìå ñòðîêè öåëåâîé ôóíêöèè)
+        return true;  // íåò ñòðîêè ñ îòðèöàòåëüíûì ñâîáîäíûì ÷èñëîì
     }
 
     // ïðîâåðêà îãðàíè÷åííîñòè öåëåâîé ôóíêöèè
@@ -45,28 +47,31 @@ private:
                 bool flag = false;
                 for (int i = _Number_of_rows - 2; i != -1; i--)
                 {
-                    if (_Table[i][j] > 0)  // ïðîâåðêà ïðèçíàêà íåîãðàíè÷åííîñòè öåëåâîé ôóíêöèè 
+                    if (_Table[i][j] > 0)
                     {
                         flag = true;
                         break;
                     }
                 }
-                if (flag == false) // íåò õîòÿ áû îäíîãî ïîëîæèòåëüíîãî ýëåìåíòà
-                    return false; 
+                // íåò õîòÿ áû îäíîãî ïîëîæèòåëüíîãî ýëåìåíòà
+                if (flag == false)
+                    return false;
             }
         }
-        return true; // íåò êîëîíêè ñ îòðèöàòåëüíûì ýëåìåíòîì â ñòðîêå öåëåâîé ôóíêöèè
+        // íåò êîëîíêè ñ îòðèöàòåëüíûì ýëåìåíòîì â ñòðîêå öåëåâîé ôóíêöèè
+        return true;
     }
 
     // ïðîâåðêà äîïóñòèìîñòè íàéäåííîãî áàçèñíîãî ðåøåíèÿ
     bool is_permissible()
     {
-        for (size_t i = 0; i < _Number_of_rows; ++i) 
+        for (size_t i = 0; i < _Number_of_rows; ++i)
         {
+            // áàçèñíîå ðåøåíèå ñîäåðæèò îòðèöàòåëüíóþ êîìïîíåíòó
             if (_Table[i][0] < 0)
-                return false; // áàçèñíîå ðåøåíèå ñîäåðæèò îòðèöàòåëüíóþ êîìïîíåíòó
+                return false;
         }
-        return true; // áàçèñíîå ðåøåíèå íå ñîäåðæèò îòðèöàòåëüíûõ êîìïîíåíò
+        return true;  // áàçèñíîå ðåøåíèå íå ñîäåðæèò îòðèöàòåëüíûõ êîìïîíåíò
     }
 
     // ïðîâåðêà îïòèìàëüíîñòè
@@ -77,7 +82,8 @@ private:
             if (_Table[_Number_of_rows - 1][j] < 0)
                 return false;
         }
-        return true; // â ñòðîêå öåëåâîé ôóíêöèè íå äîëæíî áûòü îòðèöàòåëüíûõ ýëåìåíòîâ
+        // â ñòðîêå öåëåâîé ôóíêöèè íå äîëæíî áûòü îòðèöàòåëüíûõ ýëåìåíòîâ
+        return true;
     }
 
     // ïðîâåðêà íà àëüòåðíàòèâíîñòü ðåøåíèÿ
@@ -119,12 +125,16 @@ private:
         for (size_t i = 0; i < _Number_of_rows - 1; ++i)
         {
             if (_Table[i][resolving_column] != 0)
-                if(_Table[i][0] / _Table[i][resolving_column] > 0)
+            {
+                if (_Table[i][0] / _Table[i][resolving_column] > 0)
                     ratios.push_back(_Table[i][0] / _Table[i][resolving_column]);
                 else
                     ratios.push_back(std::numeric_limits<double>::max());
+            }
             else
+            {
                 ratios.push_back(std::numeric_limits<double>::max());
+            }
         }
         auto min = std::min_element(ratios.begin(), ratios.end());
         return std::distance(ratios.begin(), min);
@@ -132,7 +142,7 @@ private:
 
     void init_basis()
     {
-        for (size_t k = 1; k < _Number_of_columns + _Number_of_rows - 2;)
+        for (int k = 1; k < _Number_of_columns + _Number_of_rows - 2;)
         {
             for (size_t i = 0, j = 1; j < _Number_of_columns; ++j, ++k)
             {
@@ -164,7 +174,8 @@ private:
         }
 
         // ìåíÿåì áàçèñ
-        std::swap(_Basis[std::make_pair(0, main_col)], _Basis[std::make_pair(main_row, 0)]);
+        std::swap(_Basis[std::make_pair(0, main_col)],
+            _Basis[std::make_pair(main_row, 0)]);
 
         // Ïðåîáðàçîâàíèå ðàçðåøàþùåãî ýëåìåíòà
         new_table[main_row][main_col] = 1 / resolving_element;
@@ -192,7 +203,8 @@ private:
             {
                 if (j == main_col)
                     continue;
-                new_table[i][j] = _Table[i][j] - (_Table[i][main_col] * _Table[main_row][j] / resolving_element);
+                new_table[i][j] = _Table[i][j] -
+                    (_Table[i][main_col] * _Table[main_row][j] / resolving_element);
             }
         }
 
@@ -210,6 +222,25 @@ private:
 
 public:
     Simplex() = default;
+
+    void init_my_variant()
+    {
+        _Number_of_columns = 4;
+        _Number_of_rows = 4;
+
+        _Table = new double*[4];
+        for (size_t i = 0; i < 4; ++i)
+        {
+            _Table[i] = new double[4];
+        }
+
+        _Table[0][0] = 5; _Table[0][1] = 2; _Table[0][2] = 1; _Table[0][3] = 1;
+        _Table[1][0] = 3; _Table[1][1] = 1; _Table[1][2] = 2; _Table[1][3] = 0;
+        _Table[2][0] = 8; _Table[2][1] = 0; _Table[2][2] = 0.5; _Table[2][3] = 1;
+        _Table[3][0] = 0; _Table[3][1] = -5; _Table[3][2] = -6; _Table[3][3] = -1;
+
+        this->init_basis();
+    }
 
     void print()
     {
@@ -237,7 +268,6 @@ public:
             std::cout << std::endl;
         }
         std::cout << "-----------------------------------------------" << std::endl;
-
     }
 
     ~Simplex()
@@ -254,7 +284,7 @@ public:
 
     void init()
     {
-        std::cout << "Äàííàÿ ïðîãðàììà ðåøàåò çàäà÷ó âèäà ÀÕ<=B ïðè ñõ-> max" << std::endl;
+        std::cout << "Çàäà÷à âèäà ÀÕ<=B ïðè ñX->max" << std::endl;
 
         int number_of_variables = 0;
         int number_of_conditions = 0;
@@ -317,11 +347,12 @@ public:
         this->print();
         while (true)
         {
-            if (is_compatibility()) // ïðîâåðêà ñîâìåñòíîñòè ñèñòåìû îãðàíè÷åíèé
+            if (is_compatibility())  // ïðîâåðêà ñîâìåñòíîñòè ñèñòåìû îãðàíè÷åíèé
             {
-                if (is_limitation()) // ïðîâåðêà îãðàíè÷åííîñòè öåëåâîé ôóíêöèè
+                if (is_limitation())  // ïðîâåðêà îãðàíè÷åííîñòè öåëåâîé ôóíêöèè
                 {
-                    if (is_permissible() && is_optimal())  // ïðîâåðêà äîïóñòèìîñòè íàéäåííîãî áàçèñíîãî ðåøåíèÿ
+                    // ïðîâåðêà äîïóñòèìîñòè íàéäåííîãî áàçèñíîãî ðåøåíèÿ
+                    if (is_permissible() && is_optimal())
                     {
                         // ïðîâåðêà àëüòåðíàòèâíîñòè ðåøåíèÿ
                         if (has_alternative())
@@ -352,5 +383,4 @@ public:
     {
         std::cout << "F = " << _Table[_Number_of_rows - 1][0] << std::endl;
     }
-
 };
