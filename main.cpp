@@ -1,4 +1,4 @@
-#include "Simplex.h"
+#include "Simplex.hpp"
 
 
 int main()
@@ -9,6 +9,6 @@ int main()
     simplex_method->init_my_variant();
     simplex_method->calculate();
     simplex_method->result();
-    system("pause");
+    // system("pause");
     return 0;
 }
