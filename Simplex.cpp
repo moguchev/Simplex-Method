@@ -1,4 +1,4 @@
-#include "Simplex.h"
+#include "Simplex.hpp"
 
 // проверка совместности системы ограничений
 bool Simplex::is_compatibility()
